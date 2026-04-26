@@ -23,6 +23,7 @@ function Convert-ToJpeg {
 $brainDir = "C:\Users\Perfect Elect\.gemini\antigravity\brain\1b94873b-c815-4566-bb3a-3d1cc31c834a"
 $buenoDir = "c:\Users\Perfect Elect\Downloads\Bueno"
 
-Convert-ToJpeg "$brainDir\bueno_signage2_1777224970950.png" "$buenoDir\srv_signboards.jpg"
-Convert-ToJpeg "$brainDir\bueno_banner2_1777225013529.png" "$buenoDir\srv_banner.jpg"
-Convert-ToJpeg "$brainDir\bueno_vinyl_1777225028852.png" "$buenoDir\srv_vinyl.jpg"
+Convert-ToJpeg "$brainDir\bueno_vehicle2_1777225686032.png" "$buenoDir\vehicle.jpg"
+Convert-ToJpeg "$brainDir\bueno_tshirt2_1777225703576.png" "$buenoDir\tshirt.jpg"
+Convert-ToJpeg "$brainDir\bueno_branding2_1777225723508.png" "$buenoDir\srv_branding.jpg"
+Convert-ToJpeg "$brainDir\bueno_corp_identity_1777225740927.png" "$buenoDir\srv_corp_id.jpg"
