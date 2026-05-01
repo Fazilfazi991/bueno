@@ -702,7 +702,7 @@ async function handleForm(e) {
   btn.textContent = 'Sending...';
   
   try {
-    const response = await fetch('https://formspree.io/f/press.bueno@gmail.com', {
+    const response = await fetch('https://formspree.io/press.bueno@gmail.com', {
       method: 'POST',
       body: new FormData(form),
       headers: { 'Accept': 'application/json' }
