@@ -289,6 +289,7 @@ section { padding: 100px 5vw; }
 .fsubmit:hover { background: var(--red-dark); transform: translateY(-2px); }
 .fmsg { display: none; padding: 13px 18px; font-size: 13px; font-weight: 600; border-radius: 1px; }
 .fmsg.ok { background: rgba(39,174,96,0.1); border: 1px solid rgba(39,174,96,0.35); color: #27ae60; }
+.fmsg.err { background: rgba(192,57,43,0.1); border: 1px solid rgba(192,57,43,0.35); color: var(--red); }
 
 /* FOOTER */
 footer {
@@ -612,18 +613,18 @@ footer a { color: var(--red); text-decoration: none; }
         <div><div class="cdetail-label">Location</div><div class="cdetail-val">P.O. Box 13372, Doha — Qatar</div></div>
       </div>
     </div>
-    <form class="cform" id="cForm" onsubmit="handleForm(event)">
+    <form class="cform" id="cForm">
       <div class="frow">
-        <div class="fg"><label class="flabel">Full Name *</label><input class="finput" type="text" placeholder="Your full name" required></div>
-        <div class="fg"><label class="flabel">Company</label><input class="finput" type="text" placeholder="Your company"></div>
+        <div class="fg"><label class="flabel">Full Name *</label><input name="name" class="finput" type="text" placeholder="Your full name" required></div>
+        <div class="fg"><label class="flabel">Company</label><input name="company" class="finput" type="text" placeholder="Your company"></div>
       </div>
       <div class="frow">
-        <div class="fg"><label class="flabel">Email *</label><input class="finput" type="email" placeholder="you@company.com" required></div>
-        <div class="fg"><label class="flabel">Phone</label><input class="finput" type="tel" placeholder="+974 xxxx xxxx"></div>
+        <div class="fg"><label class="flabel">Email *</label><input name="email" class="finput" type="email" placeholder="you@company.com" required></div>
+        <div class="fg"><label class="flabel">Phone</label><input name="phone" class="finput" type="tel" placeholder="+974 xxxx xxxx"></div>
       </div>
       <div class="fg">
         <label class="flabel">Service Required</label>
-        <select class="fselect">
+        <select name="service" class="fselect">
           <option value="">Select a service...</option>
           <option>Branding & Corporate Identity</option>
           <option>Digital Printing</option>
@@ -637,9 +638,9 @@ footer a { color: var(--red); text-decoration: none; }
           <option>Multiple / Other</option>
         </select>
       </div>
-      <div class="fg"><label class="flabel">Project Details *</label><textarea class="ftextarea" placeholder="Tell us about your project, timeline and budget..." required></textarea></div>
+      <div class="fg"><label class="flabel">Project Details *</label><textarea name="message" class="ftextarea" placeholder="Tell us about your project, timeline and budget..." required></textarea></div>
       <div class="fmsg" id="fMsg"></div>
-      <button type="submit" class="fsubmit">Send Message &rarr;</button>
+      <button type="submit" class="fsubmit" id="fSubmit">Send Message &rarr;</button>
     </form>
   </div>
 </section>
@@ -691,15 +692,43 @@ window.addEventListener('scroll', () => {
   window.scrollY > 500 ? st.classList.add('vis') : st.classList.remove('vis');
 });
 
-function handleForm(e) {
+async function handleForm(e) {
   e.preventDefault();
+  const form = e.target;
+  const btn = document.getElementById('fSubmit');
   const msg = document.getElementById('fMsg');
-  msg.style.display = 'block';
-  msg.className = 'fmsg ok';
-  msg.textContent = 'Message sent successfully. We will respond within 24 hours.';
-  e.target.reset();
-  setTimeout(() => { msg.style.display = 'none'; }, 6000);
+  
+  btn.disabled = true;
+  btn.textContent = 'Sending...';
+  
+  try {
+    const response = await fetch('https://formspree.io/f/press.bueno@gmail.com', {
+      method: 'POST',
+      body: new FormData(form),
+      headers: { 'Accept': 'application/json' }
+    });
+    
+    if (response.ok) {
+      msg.style.display = 'block';
+      msg.className = 'fmsg ok';
+      msg.textContent = 'Message sent successfully. We will respond within 24 hours.';
+      form.reset();
+      setTimeout(() => { msg.style.display = 'none'; }, 6000);
+    } else {
+      const data = await response.json();
+      throw new Error(data.error || 'Submission failed');
+    }
+  } catch (err) {
+    msg.style.display = 'block';
+    msg.className = 'fmsg err'; // Note: I should define .fmsg.err in CSS if not already there
+    msg.textContent = 'Oops! There was a problem submitting your form. Please try again.';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Send Message →';
+  }
 }
+
+document.getElementById('cForm').addEventListener('submit', handleForm);
 
 document.querySelectorAll('.wf-btn').forEach(btn => {
   btn.addEventListener('click', () => {
